@@ -1,0 +1,5 @@
+outs:
+- md5: ae19e56faf90ec9cc527a55aa459448c
+  size: 244950327
+  hash: md5
+  path: df_fraud_bivar.parquet

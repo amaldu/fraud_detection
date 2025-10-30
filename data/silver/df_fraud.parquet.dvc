@@ -1,0 +1,5 @@
+outs:
+- md5: 46c645bb7ed99a6615ed052e0fec6b59
+  size: 235494622
+  hash: md5
+  path: df_fraud.parquet

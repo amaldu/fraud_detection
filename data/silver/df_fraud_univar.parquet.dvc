@@ -1,0 +1,5 @@
+outs:
+- md5: 0c4b64c8845d1b95d1261832a0e95a05
+  size: 207726574
+  hash: md5
+  path: df_fraud_univar.parquet
