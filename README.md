@@ -1,9 +1,6 @@
-fraud_detection
-==============================
+# Fraud Detection Project
 
-
---------
-Dataset context
+## Dataset context
 
 PaySim simulates mobile money transactions based on a sample of real transactions extracted from one month of financial logs from a mobile money service implemented in an African country. The original logs were provided by a multinational company, who is the provider of the mobile financial service which is currently running in more than 14 countries all around the world.
 
@@ -23,31 +20,23 @@ PaySim simulates mobile money transactions based on a sample of real transaction
 
 
 
-Instructions
-------------
+## Instructions
 
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/AMaldu/fraud_detection
    cd fraud-detection
-
-
 2. **Create virtual environment**: To install the dependencies and activate the virtual environment, run the following commands:
     ```bash
     pipenv --3.10
     pipenv shell
-
 3. **Install the dependencies**:
     ```bash
     pipenv install -r requirements.txt
-
 4. **Running the project**:
     ```bash
     docker compose up
-
-
-How it works
-------------
+## How it works
 
 **Notebooks**: this folder contains the part with the EDA
 - basic EDA
