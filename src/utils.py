@@ -4,6 +4,7 @@ import os
 import pickle
 
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def pie_plot(col):
@@ -20,6 +21,25 @@ def pie_plot(col):
         explode=explode,
     )
     plt.title(f"Percentatge of {col.name} values")
+    plt.show()
+
+
+def bar_plot(col):
+    type_counts = col.value_counts()
+    colors_palette = sns.color_palette("husl", len(type_counts))
+
+    plt.figure(figsize=(10, 6))
+    ax = type_counts.plot(kind="bar", color=colors_palette, alpha=0.8)
+    ax.set_title(f"Distribution of {col.name}", fontsize=14, fontweight="bold")
+    ax.set_xlabel(col.name, fontsize=12)
+    ax.set_ylabel("Count", fontsize=12)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+    ax.grid(axis="y", alpha=0.3)
+
+    for i, v in enumerate(type_counts):
+        ax.text(i, v + v * 0.02, f"{v:,}", ha="center", fontsize=10)
+
+    plt.tight_layout()
     plt.show()
 
 
