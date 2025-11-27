@@ -8,6 +8,7 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: check-added-large-files
+        args: ['--maxkb=5120']  # <-- FIX: indentación correcta
 
 -   repo: https://github.com/pycqa/isort
     rev: 5.13.2
@@ -30,19 +31,6 @@ repos:
         require_serial: true
         args:
             [
-            "-rn", # Only display messages
-            "-sn", # Don't display the score
+            "-rn",  # Only display messages
+            "-sn",  # Don't display the score
             ]
-
-
-# -   repo: local
-#     hooks:
-#     -   id: pytest-check
-#         name : pytest-check
-#         entry: pytest
-#         language: system
-#         pass_filenames: false
-#         always_run: true
-#         args:  [
-#             "tests/"
-#         ]
