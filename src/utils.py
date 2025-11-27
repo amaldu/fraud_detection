@@ -6,6 +6,106 @@ import pickle
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+### Helper functions for statistics ###
+
+
+def skewness_and_kurtosis(col):
+    skewness_value = round(col.skew(), 2)
+    kurtosis_value = round(col.kurt(), 2)
+
+    print(f"Skewness: {skewness_value}")
+    print(f"Kurtosis: {kurtosis_value}")
+
+
+def bool_analysis(col):
+    """Function to display basic bool statistics of a boolean column"""
+    print("Column type")
+    print(col.dtype)
+
+    print("\nUnique values:")
+    print(col.unique())
+
+    print("\nTotal amount of unique values:")
+    print(col.nunique())
+
+    print("\nDescriptive statistics:")
+    print(col.describe())
+
+    print("\nAbsolute Frequency:")
+    print(col.value_counts())
+
+    print("\nRelative Frequency (%):")
+    print(col.value_counts(normalize=True).mul(100).round(2).astype(str) + "%")
+
+    print("\nImbalance ratio")
+    counts = col.value_counts()
+    maj, min_ = counts.max(), counts.min()
+    imbalance_ratio = maj / min_
+    print(f"1 : {imbalance_ratio:.2f} (minority to majority)")
+
+
+def categorical_analysis(col):
+    """Function to display basic statistics of a categorical column"""
+    print("Column type")
+    print(col.dtype)
+
+    print("\nUnique values:")
+    print(list(col.unique()))
+
+    print("\nTotal amount of unique values:")
+    print(col.nunique())
+
+    print("\nAbsolute Frequency:")
+    print(col.value_counts())
+
+    print("\nRelative Frequency (%):")
+    print(col.value_counts(normalize=True).mul(100).round(2).astype(str) + "%")
+
+
+def numerical_analysis(col):
+    """Function to display basic numerical statistics of a numerical column"""
+    print("Column type")
+    print(col.dtype)
+
+    print("\nMissing values:")
+    print(col.isnull().sum())
+
+    print("\nDescriptive statistics:")
+    print(col.describe())
+
+    print("\nMeasures of central tendency")
+    print("Median:", col.median())
+    print("Mode:", col.mode()[0])
+
+    print("\nMeasures of dispersion")
+    Q1 = col.quantile(0.25)
+    Q3 = col.quantile(0.75)
+    IQR = Q3 - Q1
+    lower_fence = Q1 - 1.5 * IQR
+    upper_fence = Q3 + 1.5 * IQR
+
+    print(f"Q1: {Q1}")
+    print(f"Q3: {Q3}")
+    print(f"IQR: {IQR}")
+    print(f"Lower fence: {lower_fence}")
+    print(f"Upper fence: {upper_fence}")
+
+    outliers = col[(col < lower_fence) | (col > upper_fence)]
+    print(f"Number of potential outliers: {outliers.shape[0]}")
+
+    print("\nSkewness and Kurtosis:")
+    skewness_and_kurtosis(col)
+
+
+# def Histogram with KDE
+
+# def boxplot
+
+# def qq plot
+
+
+### Helper functions for plots ###
+
 
 def pie_plot(col):
     trans_freq = col.value_counts()
@@ -41,13 +141,6 @@ def bar_plot(col):
 
     plt.tight_layout()
     plt.show()
-
-
-def skewness_and_kurtosis(df, column_name):
-    skewness_value = df[column_name].skew()
-    kurtosis_value = df[column_name].kurt()
-
-    return {"skewness": skewness_value, "kurtosis": kurtosis_value}
 
 
 def detect_outliers(data):
