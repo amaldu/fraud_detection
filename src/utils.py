@@ -5,6 +5,7 @@ import pickle
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from IPython.display import Image
 
 ### Helper functions for statistics ###
 
@@ -103,47 +104,135 @@ def numerical_analysis(col):
 
 # def qq plot
 
+##########################################
+####### Helper functions for plots #######
+##########################################
+BASE_DIR = None
 
-### Helper functions for plots ###
+
+def set_base_directory(path):
+    """Initialize base directory for saving plots."""
+    global BASE_DIR
+    BASE_DIR = path
+    os.makedirs(BASE_DIR, exist_ok=True)
 
 
 def pie_plot(col):
-    trans_freq = col.value_counts()
-    explode = [0.02] * len(trans_freq)
+    if BASE_DIR is None:
+        raise ValueError("BASE_DIR is not set. Use set_base_directory(path) first.")
 
-    plt.figure(figsize=(5, 5))
-    plt.pie(
-        trans_freq,
-        labels=trans_freq.index,
-        autopct="%1.1f%%",
-        startangle=0,
-        colors=plt.cm.Set2.colors,
-        explode=explode,
-    )
-    plt.title(f"Percentatge of {col.name} values")
-    plt.show()
+    filename = f"pieplot_{col.name}.png"
+    plot_filename = os.path.join(BASE_DIR, filename)
+
+    if not os.path.isfile(plot_filename):
+        trans_freq = col.value_counts()
+        explode = [0.02] * len(trans_freq)
+
+        fig = plt.figure(figsize=(5, 5))
+        plt.pie(
+            trans_freq,
+            labels=trans_freq.index,
+            autopct="%1.1f%%",
+            startangle=0,
+            colors=plt.cm.Set2.colors,
+            explode=explode,
+        )
+        plt.title(f"Percentage of {col.name} values")
+        plt.tight_layout()
+        fig.savefig(plot_filename)
+        plt.close(fig)
+
+    return Image(filename=plot_filename)
 
 
 def bar_plot(col):
-    type_counts = col.value_counts()
-    colors_palette = sns.color_palette("husl", len(type_counts))
 
-    plt.figure(figsize=(10, 6))
-    ax = type_counts.plot(kind="bar", color=colors_palette, alpha=0.8)
-    ax.set_title(f"Distribution of {col.name}", fontsize=14, fontweight="bold")
-    ax.set_xlabel(col.name, fontsize=12)
-    ax.set_ylabel("Count", fontsize=12)
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
-    ax.grid(axis="y", alpha=0.3)
+    if BASE_DIR is None:
+        raise ValueError("BASE_DIR is not set. Use set_base_directory(path) first.")
 
-    for i, v in enumerate(type_counts):
-        ax.text(i, v + v * 0.02, f"{v:,}", ha="center", fontsize=10)
+    filename = f"barplot_{col.name}.png"
+    plot_filename = os.path.join(BASE_DIR, filename)
+
+    if not os.path.isfile(plot_filename):
+        type_counts = col.value_counts()
+        colors_palette = sns.color_palette("husl", len(type_counts))
+
+        fig, ax = plt.figure(figsize=(10, 6))
+        ax.bar(type_counts.index, type_counts.values, color=colors_palette, alpha=0.8)
+        ax.set_title(f"Distribution of {col.name}", fontsize=14, fontweight="bold")
+        ax.set_xlabel(col.name, fontsize=12)
+        ax.set_ylabel("Count", fontsize=12)
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+        ax.grid(axis="y", alpha=0.3)
+
+        for i, v in enumerate(type_counts):
+            ax.text(i, v + v * 0.02, f"{v:,}", ha="center", fontsize=10)
+
+        plt.tight_layout()
+        fig.savefig(plot_filename)
+        plt.close(fig)
+
+    return Image(filename=plot_filename)
+
+
+def numerical_plots(column):
+    fig, axes = plt.subplots(3, 1, figsize=(18, 15))
+
+    # 1. Histogram
+    axes[0].hist(column, bins=100, edgecolor="black", alpha=0.7, color="skyblue")
+    axes[0].set_title(
+        f"Histogram: {column.name} Distribution", fontsize=14, fontweight="bold"
+    )
+    axes[0].set_xlabel(f"{column.name}", fontsize=12)
+    axes[0].set_ylabel("Frequency", fontsize=12)
+    axes[0].axvline(
+        column.mean(),
+        color="red",
+        linestyle="--",
+        linewidth=2,
+        label=f"Mean: {column.mean():.1f}",
+    )
+    axes[0].axvline(
+        column.median(),
+        color="green",
+        linestyle="--",
+        linewidth=2,
+        label=f"Median: {column.median():.1f}",
+    )
+    axes[0].legend()
+    axes[0].grid(True, alpha=0.5)
+
+    # 2. Box plot
+    bp = axes[1].boxplot(column, vert=False, patch_artist=True)
+    bp["boxes"][0].set_facecolor("lightblue")
+    axes[1].set_title(
+        f"Box Plot: {column.name} Distribution", fontsize=14, fontweight="bold"
+    )
+    axes[1].set_xlabel(f"{column.name}", fontsize=12)
+    axes[1].set_yticks([])  # No y-ticks needed
+    axes[1].grid(True, alpha=0.5, axis="x")
+
+    # 3. Transactions over time
+    transactions_per_step = column.value_counts().sort_index()
+    axes[2].plot(
+        transactions_per_step.index,
+        transactions_per_step.values,
+        color="navy",
+        linewidth=1.5,
+    )
+    axes[2].set_title(
+        f"Transaction Volume Over {column.name}", fontsize=14, fontweight="bold"
+    )
+    axes[2].set_xlabel(f"{column.name}", fontsize=12)
+    axes[2].set_ylabel("Number of Transactions", fontsize=12)
+    axes[2].grid(True, alpha=0.5)
 
     plt.tight_layout()
     plt.show()
 
 
 def detect_outliers(data):
+    # FIXME - numerical types
     numeric_columns = data.select_dtypes(include=["int16", "float32"])
 
     non_binary_columns = numeric_columns.loc[:, numeric_columns.nunique() > 2]
