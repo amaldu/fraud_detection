@@ -157,7 +157,7 @@ def bar_plot(col):
         type_counts = col.value_counts()
         colors_palette = sns.color_palette("husl", len(type_counts))
 
-        fig, ax = plt.figure(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(10, 6))
         ax.bar(type_counts.index, type_counts.values, color=colors_palette, alpha=0.8)
         ax.set_title(f"Distribution of {col.name}", fontsize=14, fontweight="bold")
         ax.set_xlabel(col.name, fontsize=12)
@@ -175,60 +175,71 @@ def bar_plot(col):
     return Image(filename=plot_filename)
 
 
-def numerical_plots(column):
-    fig, axes = plt.subplots(3, 1, figsize=(18, 15))
+def numerical_plots(col):
 
-    # 1. Histogram
-    axes[0].hist(column, bins=100, edgecolor="black", alpha=0.7, color="skyblue")
-    axes[0].set_title(
-        f"Histogram: {column.name} Distribution", fontsize=14, fontweight="bold"
-    )
-    axes[0].set_xlabel(f"{column.name}", fontsize=12)
-    axes[0].set_ylabel("Frequency", fontsize=12)
-    axes[0].axvline(
-        column.mean(),
-        color="red",
-        linestyle="--",
-        linewidth=2,
-        label=f"Mean: {column.mean():.1f}",
-    )
-    axes[0].axvline(
-        column.median(),
-        color="green",
-        linestyle="--",
-        linewidth=2,
-        label=f"Median: {column.median():.1f}",
-    )
-    axes[0].legend()
-    axes[0].grid(True, alpha=0.5)
+    if BASE_DIR is None:
+        raise ValueError("BASE_DIR is not set. Use set_base_directory(path) first.")
 
-    # 2. Box plot
-    bp = axes[1].boxplot(column, vert=False, patch_artist=True)
-    bp["boxes"][0].set_facecolor("lightblue")
-    axes[1].set_title(
-        f"Box Plot: {column.name} Distribution", fontsize=14, fontweight="bold"
-    )
-    axes[1].set_xlabel(f"{column.name}", fontsize=12)
-    axes[1].set_yticks([])  # No y-ticks needed
-    axes[1].grid(True, alpha=0.5, axis="x")
+    filename = f"numerical_plots_{col.name}.png"
+    plot_filename = os.path.join(BASE_DIR, filename)
 
-    # 3. Transactions over time
-    transactions_per_step = column.value_counts().sort_index()
-    axes[2].plot(
-        transactions_per_step.index,
-        transactions_per_step.values,
-        color="navy",
-        linewidth=1.5,
-    )
-    axes[2].set_title(
-        f"Transaction Volume Over {column.name}", fontsize=14, fontweight="bold"
-    )
-    axes[2].set_xlabel(f"{column.name}", fontsize=12)
-    axes[2].set_ylabel("Number of Transactions", fontsize=12)
-    axes[2].grid(True, alpha=0.5)
+    if not os.path.isfile(plot_filename):
+        fig, axes = plt.subplots(3, 1, figsize=(18, 15))
 
-    plt.tight_layout()
-    plt.show()
+        # 1. Histogram
+        axes[0].hist(col, bins=100, edgecolor="black", alpha=0.7, color="skyblue")
+        axes[0].set_title(
+            f"Histogram: {col.name} Distribution", fontsize=14, fontweight="bold"
+        )
+        axes[0].set_xlabel(f"{col.name}", fontsize=12)
+        axes[0].set_ylabel("Frequency", fontsize=12)
+        axes[0].axvline(
+            col.mean(),
+            color="red",
+            linestyle="--",
+            linewidth=2,
+            label=f"Mean: {col.mean():.1f}",
+        )
+        axes[0].axvline(
+            col.median(),
+            color="green",
+            linestyle="--",
+            linewidth=2,
+            label=f"Median: {col.median():.1f}",
+        )
+        axes[0].legend()
+        axes[0].grid(True, alpha=0.5)
+
+        # 2. Box plot
+        bp = axes[1].boxplot(col, vert=False, patch_artist=True)
+        bp["boxes"][0].set_facecolor("lightblue")
+        axes[1].set_title(
+            f"Box Plot: {col.name} Distribution", fontsize=14, fontweight="bold"
+        )
+        axes[1].set_xlabel(f"{col.name}", fontsize=12)
+        axes[1].set_yticks([])  # No y-ticks needed
+        axes[1].grid(True, alpha=0.5, axis="x")
+
+        # 3. Transactions over time
+        transactions_per_step = col.value_counts().sort_index()
+        axes[2].plot(
+            transactions_per_step.index,
+            transactions_per_step.values,
+            color="navy",
+            linewidth=1.5,
+        )
+        axes[2].set_title(
+            f"Transaction Volume Over {col.name}", fontsize=14, fontweight="bold"
+        )
+        axes[2].set_xlabel(f"{col.name}", fontsize=12)
+        axes[2].set_ylabel("Number of Transactions", fontsize=12)
+        axes[2].grid(True, alpha=0.5)
+
+        plt.tight_layout()
+        fig.savefig(plot_filename)
+        plt.close(fig)
+
+    return Image(filename=plot_filename)
 
 
 def detect_outliers(data):
