@@ -44,7 +44,6 @@ PaySim simulates mobile money transactions based on a sample of real transaction
     mlflow server --backend-store-uri sqlite:///backend.db --default-artifact-root ./artifacts_local
     ```
 2. Now you can play with the the 'random_forest_reduced.ipynb' file and see the results on the UI of MLFlow.
-
    **Note**: The original dataset is very large, so a version of the experiments with a reduced dataset is also provided.
 
 **Orchestration**: This folder contains the scripts used for orchestration in Prefect Server
@@ -57,16 +56,13 @@ PaySim simulates mobile money transactions based on a sample of real transaction
     prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
     ```
 3. Run the `orchestrate.py` file or check the pipelines that are already inside Prefect.
-
 **Deployment**: This folder contains the scripts used for deploying the preprocessor and the model inside a Docker container.
 1. Run the Dockerfile
     ```bash
     docker build -t fraud_detection_app -f src/Dockerfile .
     docker run -p 9696:9696 fraud_detection_app
     ```
-
 **Monitorization**: This folder contains the notebooks for monitoring the model with Grafana
-
 1. Run
     ```bash
     docker compose up --build
