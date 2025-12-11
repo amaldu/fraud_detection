@@ -68,7 +68,5 @@ PaySim simulates mobile money transactions based on a sample of real transaction
     docker compose up --build
     ```
 2. Run the jupyter notebooks
-
 3. Run the 'metrics_calculation.py file and acces the Adminer database: http://localhost:8080/
-
 4. Open Grafana to see the monitorization metrics and alerts: http://localhost:3000/
