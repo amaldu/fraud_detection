@@ -62,6 +62,10 @@ PaySim simulates mobile money transactions based on a sample of real transaction
     docker build -t fraud_detection_app -f src/Dockerfile .
     docker run -p 9696:9696 fraud_detection_app
     ```
+
+
+
+
 **Monitorization**: This folder contains the notebooks for monitoring the model with Grafana
 1. Run
     ```bash
